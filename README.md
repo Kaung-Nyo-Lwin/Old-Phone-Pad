@@ -34,14 +34,14 @@ Prereqs: .NET 9 SDK
 ## UI Usage
 - Click digits to append to the sequence (Digits panel shows your input).
 - `0` displays as a space in the Digits panel.
-- `*` inserts a separator character in Digits (server interprets it as backspace when decoding).
+- `*` inserts a * in Digits (server interprets it as backspace when decoding).
 - `#` sends the digits to the server (`POST /decode`) and shows the decoded text.
 
 ![UI](images/UI.png)
 
 Keyboard shortcuts
 - Digits `0–9` to enter numbers
-- `*` to insert separator
+- `*` to delete the previous character
 - `#` to send and decode
 - Backspace to insert separator (same as `*` in the UI)
 
