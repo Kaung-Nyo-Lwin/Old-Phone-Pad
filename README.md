@@ -90,3 +90,7 @@ OldPhonePadWeb/
 ## Notes
 - The UI always displays exactly what is sent to the server. The server controls the canonical decoding.
 - If you change decoding behavior, adjust `Program.cs` and (optionally) align the UI hints.
+
+## Program.cs Documentation
+
+Detailed documentation for the hosting, endpoint, and decoder lives in `docs/Program.md`.
