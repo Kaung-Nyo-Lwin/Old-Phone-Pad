@@ -1,0 +1,36 @@
+# ---- .NET / Visual Studio ----
+**/bin/
+**/obj/
+/.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build / test outputs
+TestResult*/
+**/TestResults/
+*.trx
+*.coverage*
+coverage*.xml
+*.sarif
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Rider / JetBrains
+.idea/
+
+# Node (if added later)
+node_modules/
+
+# Docker
+*.pid
+

@@ -1,0 +1,149 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Old Phone Pad – Keypad (Server Decode)</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; padding: 2rem; min-height: 100vh; display: grid; place-items: center; }
+    .card { max-width: 460px; padding: 1.25rem; border: 1px solid #e1e1e1; border-radius: 10px; }
+    h1 { margin-top: 0; font-size: 1.5rem; }
+    .row { display: flex; gap: .5rem; align-items: center; margin-top: .75rem; }
+    .hint { color: #666; font-size: .9rem; margin-top: .25rem; }
+    .out { white-space: pre-wrap; background: #fafafa; border: 1px dashed #ddd; padding: .75rem; border-radius: 8px; min-height: 2.5rem; }
+    .footer { color: #777; font-size: .85rem; margin-top: 1rem; }
+    button { font: inherit; background: #0d6efd; color: white; border: 0; padding: .6rem .9rem; border-radius: 8px; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    .keypad { display: grid; grid-template-columns: repeat(3, 100px); grid-auto-rows: 82px; gap: .5rem; margin-top: .75rem; justify-content: center; }
+    .key { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: .6rem; border-radius: 10px; background: #f3f4f6; border: 1px solid #e5e7eb; cursor: pointer; }
+    .key:hover { background: #e9ecef; }
+    .key .num { font-weight: 700; font-size: 1.25rem; line-height: 1; color: #0d6efd; }
+    .key .letters { font-size: .8rem; color: #555; margin-top: .15rem; letter-spacing: .04em; }
+    .key.action { background: #fff7ed; border-color: #fed7aa; }
+    .key.action:hover { background: #ffedd5; }
+    .status { min-height: 1.25rem; color: #666; font-size: .9rem; }
+    .controls { display: flex; gap: .5rem; margin-top: .5rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Old Phone Pad – Web Keypad</h1>
+
+    <div class="row">
+      <div style="flex:1 1 auto">
+        <div class="hint">Digits</div>
+        <div id="digitsOut" class="out" aria-live="polite"></div>
+        <div class="hint" style="margin-top:.75rem">Decoded</div>
+        <div id="decodedOut" class="out" aria-live="polite"></div>
+        <div id="status" class="status"></div>
+        <div class="controls">
+          <button id="clear" type="button">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="keypad" aria-label="Phone keypad">
+      <button class="key" data-key="1"><span class="num">1</span><span class="letters">Sep</span></button>
+      <button class="key" data-key="2"><span class="num">2</span><span class="letters">ABC</span></button>
+      <button class="key" data-key="3"><span class="num">3</span><span class="letters">DEF</span></button>
+
+      <button class="key" data-key="4"><span class="num">4</span><span class="letters">GHI</span></button>
+      <button class="key" data-key="5"><span class="num">5</span><span class="letters">JKL</span></button>
+      <button class="key" data-key="6"><span class="num">6</span><span class="letters">MNO</span></button>
+
+      <button class="key" data-key="7"><span class="num">7</span><span class="letters">PQRS</span></button>
+      <button class="key" data-key="8"><span class="num">8</span><span class="letters">TUV</span></button>
+      <button class="key" data-key="9"><span class="num">9</span><span class="letters">WXYZ</span></button>
+
+      <button class="key action" data-key="*"><span class="num">*</span><span class="letters">Separator</span></button>
+      <button class="key" data-key="0"><span class="num">0</span><span class="letters">Space</span></button>
+      <button class="key action" data-key="#"><span class="num">#</span><span class="letters">Send</span></button>
+    </div>
+
+    <p class="footer">Tap digits to build the sequence. 0 shows as a space. * inserts a separator (does not delete). # sends to the server for decoding. Keys not in 0 or 2-9 act as separators (e.g., 1, *, #).</p>
+  </div>
+
+  <script>
+    const digitsOut = document.getElementById('digitsOut');
+    const decodedOut = document.getElementById('decodedOut');
+    const status = document.getElementById('status');
+    const clearBtn = document.getElementById('clear');
+
+    let digits = '';
+
+    function render() {
+      // Display: show space instead of '0', and literal '*' when pressed
+      const display = digits.replace(/0/g, ' ');
+      digitsOut.textContent = display;
+    }
+
+    function handleDigit(k) {
+      digits += k;
+      render();
+    }
+
+    function handleBackspace() {
+      // Do not delete; append '*' and show it in the UI
+      digits += '*';
+      render();
+    }
+
+    async function handleSend() {
+      if (digits.length === 0) {
+        status.textContent = 'Nothing to send';
+        setTimeout(() => status.textContent = '', 1200);
+        return;
+      }
+      status.textContent = 'Decoding...';
+      try {
+        const res = await fetch('/decode', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ input: digits+'#' })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const decoded = typeof data.decoded === 'string' ? data.decoded : '';
+        decodedOut.textContent = decoded;
+        status.textContent = 'Done';
+      } catch (e) {
+        status.textContent = 'Error: ' + (e?.message || e);
+      } finally {
+        setTimeout(() => status.textContent = '', 1200);
+      }
+    }
+
+    document.querySelectorAll('.key').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const k = btn.getAttribute('data-key');
+        if (k === '*') return handleBackspace();
+        if (k === '#') return handleSend();
+        if (/^[0-9]$/.test(k)) return handleDigit(k);
+      });
+    });
+
+    function handleClear() {
+      digits = '';
+      render();
+      status.textContent = 'Cleared';
+      setTimeout(() => status.textContent = '', 1000);
+    }
+
+    clearBtn.addEventListener('click', handleClear);
+
+    // Keyboard support mirroring the keypad
+    document.addEventListener('keydown', (e) => {
+      const k = e.key;
+      if (k === 'Backspace') { e.preventDefault(); handleBackspace(); return; }
+      // Only '#' triggers decode; 'Enter' no longer sends
+      if (/^[0-9]$/.test(k)) { e.preventDefault(); handleDigit(k); return; }
+      if (k === '*') { e.preventDefault(); handleBackspace(); return; }
+      if (k === '#') { e.preventDefault(); handleSend(); return; }
+    });
+
+    render();
+  </script>
+</body>
+</html>

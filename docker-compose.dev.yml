@@ -1,0 +1,16 @@
+services:
+  web:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    working_dir: /src
+    volumes:
+      - ./:/src
+      - dotnet-nuget:/root/.nuget/packages
+    command: ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+volumes:
+  dotnet-nuget:
+
