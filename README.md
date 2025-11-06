@@ -37,7 +37,7 @@ Prereqs: .NET 9 SDK
 - `*` inserts a separator character in Digits (server interprets it as backspace when decoding).
 - `#` sends the digits to the server (`POST /decode`) and shows the decoded text.
 
-[UI.png](images/UI.png)
+![UI](images/UI.png)
 
 Keyboard shortcuts
 - Digits `0–9` to enter numbers
