@@ -66,7 +66,7 @@ Keyboard shortcuts
 - Run: `dotnet test`
 
 Test cases cover:
-- Provided examples (E, B, HELLO, TUSING)
+- Provided examples (E, B, HELLO, TURING)
 - Null/empty input, send only, spaces only
 - Backspace behavior and wrap‑around logic
 
@@ -85,7 +85,7 @@ OldPhonePadWeb/
 ```
 
 ## Discussion with AI
-[link](https://gemini.google.com/share/64b663ab4988)
+[link](https://gemini.google.com/share/b694eb8d7733)
 
 ## Notes
 - The UI always displays exactly what is sent to the server. The server controls the canonical decoding.
