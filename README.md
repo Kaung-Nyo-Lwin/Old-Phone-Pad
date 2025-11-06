@@ -84,6 +84,9 @@ OldPhonePadWeb/
    └─ OldPhonePadWeb.Tests/   # NUnit tests
 ```
 
+## Discussion with AI
+[link](https://gemini.google.com/share/64b663ab4988)
+
 ## Notes
 - The UI always displays exactly what is sent to the server. The server controls the canonical decoding.
 - If you change decoding behavior, adjust `Program.cs` and (optionally) align the UI hints.
