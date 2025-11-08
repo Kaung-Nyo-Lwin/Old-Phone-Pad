@@ -19,7 +19,7 @@ On the server, consecutive presses of the same digit map to a letter. The mappin
 Examples
 - `33#` → E
 - `4433555 555666#` → HELLO
-- `8 88777444666*664#` → TUSING
+- `8 88777444666*664#` → TURING
 
 ## Run Locally
 Prereqs: .NET 9 SDK
