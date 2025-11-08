@@ -77,7 +77,6 @@ private static readonly Dictionary<char, string> _keyMap = new()
        - If `currentBuffer` is non‑empty and `currentBuffer[0] != c`, then `ProcessBuffer` (commit), clear `currentBuffer`, and start a new run with `c`.
        - Else append `c` to `currentBuffer` (continuation of the current run).
      - Any other character: ignored.
-  4. After the loop, call `ProcessBuffer(currentBuffer, output)` to commit any pending run unless the loop terminated early after `'#'` (in which case `currentBuffer` will already be empty if immediately cleared before breaking).
 - Complexity:
   - Time: O(N) for input length N.
   - Space: O(N) for output. `currentBuffer` is bounded by the longest run of identical digits.
